@@ -4,7 +4,7 @@ import { Button, Input, Modal, Select } from "antd";
 import useStore from "../store";
 import TextArea from "antd/es/input/TextArea";
 import axios from "axios";
-import {useMutation} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
 import {postNewTodo} from "../pages/MainPage.tsx";
 
 const Container = styled.div`
@@ -61,7 +61,13 @@ const AddToDoModal = () => {
         await axios.post(`https://cms.laurence.host/api/tasks`, newTodo)
     }
 
-    const mutation = useMutation(newTodo=> postNewTodo(newTodo));
+
+    const queryClient = useQueryClient();
+
+
+    const mutation = useMutation(newTodo=> postNewTodo(newTodo), {
+        onSuccess:() => queryClient.invalidateQueries(['todos']),
+    });
 
 
 

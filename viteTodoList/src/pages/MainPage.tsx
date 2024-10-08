@@ -1,7 +1,7 @@
 import useStore from "../store";
 import TodoCard from "../components/TodoCard.tsx";
 import AddToDoModal from "../components/AddTodoModal.tsx";
-import {useMutation, useQuery} from "react-query";
+import {useMutation, useQuery, useQueryClient} from "react-query";
 import axios from "axios";
 // import {data} from "../queries.ts";
 
@@ -29,7 +29,20 @@ const MainPage = () => {
 
     const {addToFavorite, removeFromFavorite} = useStore();
 
+
     const {data} = useQuery('todos', fetchTodos);
+
+
+    const queryClient = useQueryClient();
+
+    async function deleteTodo (id:any) {
+        await axios.delete(`https://cms.laurence.host/api/tasks/${id}`, )
+    }
+
+    const deleteMutation = useMutation(id => deleteTodo(id), {
+        onSettled: async () => await queryClient.invalidateQueries(['todos'])
+
+    });
 
     // const mutation = useMutation(newTodo=> postNewTodo(newTodo));
 
@@ -56,7 +69,7 @@ const MainPage = () => {
                         status={item.attributes.status}
                         addToFav={() => addToFavorite(item)}
                         removeFromFav={() => removeFromFavorite(item.id)}
-                        // deleteTodo={() => deleteTodo(item.id)}
+                        deleteTodo={() => deleteTodo(item.id)}
                         // changeStatus={() => changeStatus(item.id, item.attributes.status)}
                     />
                 ))}
