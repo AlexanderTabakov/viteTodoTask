@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "antd": "^5.21.2",
+    "styled-components": "^6.1.13",
+    "zustand": "^5.0.0-rc.2"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.0.1"
+  }
+}
