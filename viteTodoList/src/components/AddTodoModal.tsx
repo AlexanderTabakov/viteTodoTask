@@ -126,7 +126,7 @@ const AddToDoModal = () => {
                         { value: "completed", label: "Completed" },
                     ]}
                 />
-                <Button type="primary" onClick={() => onSubmit(event)}>
+                <Button type="primary" onClick={() => onSubmit(event)} >
                     ADD TODO
                 </Button>
             </Modal>

@@ -28,7 +28,7 @@ export interface IState {
     reset?: () => void;
     copiedData: any;
     copyData: () => void;
-    favoriteTodos?: IItem[];
+    favoriteTodos: IItem[];
     // addToFavorite?:(newTodo: IItem) => void;
     addToFavorite?: any;
     removeFromFavorite?: (id: number) => void;
