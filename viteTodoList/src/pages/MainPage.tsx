@@ -7,6 +7,7 @@ import {Spin} from "antd";
 
 
 import styled from "styled-components";
+import {a} from "vite/dist/node/types.d-aGj9QkWt";
 
 const Container = styled.main`
   position: relative;
@@ -31,16 +32,6 @@ const Container = styled.main`
   }
 `;
 
-// import {data} from "../queries.ts";
-
-
-// async function fetchTodos () {
-//     const {data} = await axios.get(
-//         `https://cms.laurence.host/api/tasks`
-//     )
-//     return data.data;
-//
-// }
 
 
 async function fetchTodos () {
@@ -48,9 +39,7 @@ async function fetchTodos () {
         .data.data;
 }
 
-// export async function postNewTodo (newTodo:any) {
-//    await axios.post(`https://cms.dev-land.host/api/tasks`, newTodo)
-// }
+
 
 
 const MainPage = () => {
@@ -63,9 +52,6 @@ const MainPage = () => {
 
     const queryClient = useQueryClient();
 
-    // async function deleteTodo (id:any) {
-    //     await axios.delete(`https://cms.laurence.host/api/tasks/${id}`, )
-    // }
 
 
     async function deleteTodo(id: any) {
@@ -74,11 +60,8 @@ const MainPage = () => {
     }
 
     const mutation = useMutation(id => deleteTodo(id), {
-        // onSettled: async () => await queryClient.invalidateQueries(['todos'], {}),
 
-
-        onSuccess:  () =>  queryClient.invalidateQueries(['todos'],),
-
+        onSuccess:  () =>  queryClient.invalidateQueries(['todos'],)
 
     });
 
@@ -89,18 +72,71 @@ const MainPage = () => {
 
 
 
-    // mutation.mutate(id)
+    // async function updateStatus(id: any, item:any) {
+    //     // const { name, description, status } = item;
+    //     // const test = { data: { name, description, status } };
+    //     console.log('item', item)
+    //     const response = await axios.put(`https://cms.laurence.host/api/tasks/${id}`,
+    //         {item}
+    //     );
+    //
+    //     console.log('item', item)
+    //
+    //     return response.data;
+    //
+    // }
+
+
+    async function updateStatus(id: any, item: any) {
+        const { name, description, status } = item?.attributes;
+
+
+        const requestBody = {
+            data: {
+                name,
+                description,
+                status,
+            },
+        };
+
+        const response = await axios.put(`https://cms.laurence.host/api/tasks/${id}`, requestBody);
+        return response.data;
+    }
 
 
 
-    //TODO разобраться с перерисовкой страницы
+    const mutationUpdateStatus = useMutation((id, item ) => updateStatus(id , item ), {
+        onSuccess: () => queryClient.invalidateQueries(['todos']),
+    });
+
+    const testUpdate = (id:any, item:any) => {
+        mutationUpdateStatus.mutate(id, item)
+        // console.log('putting update status')
+    }
 
 
-    // const mutation = useMutation(newTodo=> postNewTodo(newTodo));
+    const anotherTestUpdate = (id:any, item:any) => {
 
-    // mutation.mutate()
 
-    console.log('testData',data)
+        const { status } = item?.attributes;
+
+        if (status === 'completed') {
+            item.attributes.status = 'active';
+        } else if (status === 'active') {
+            item.attributes.status = 'completed'
+        }
+
+
+        updateStatus(id, item);
+    }
+
+
+
+
+
+
+
+    // console.log('testData',data)
 
 
     // if (isLoading) {
@@ -112,13 +148,9 @@ const MainPage = () => {
         //     return <Spin/>
         // }
 
-    if(isError) {
+    if (isError) {
         return <div>Error =( </div>;
     }
-
-
-
-
 
     return (
 
@@ -147,6 +179,10 @@ const MainPage = () => {
                         removeFromFav={() => removeFromFavorite(item.id)}
                         deleteTodo={() => testDelete(item.id)}
                         // changeStatus={() => changeStatus(item.id, item.attributes.status)}
+                        // changeStatus={() => updateStatus(item.id, item)}
+                        changeStatus={() => anotherTestUpdate(item.id, item)}
+                        // changeStatus={() => testUpdate(item.id, item)}
+                        // changeStatus={(newStatus) => mutationUpdateStatus.mutate(item.id, newStatus)}
                     />
                 ))}
             </div>
